@@ -131,6 +131,7 @@ plt.show()
 To further prove that there is a nonlinear boundary between a faulty vs a normal engine, we visualized a decision boundary. 
 
 ![SVMPCA](figures/nonlinear_decision_boundary.png)
+
 Engine faults are driven by nonlinear combinations of sensor readings (temperature, pressure, RPM).
 The PCA + SVM boundary visualization clearly shows that fault conditions do not form distinct clusters in feature space; instead, they interleave continuously with normal operating states.Therefore:
 
@@ -374,6 +375,7 @@ weighted avg       0.65      0.67      0.65      3907
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
 
