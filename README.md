@@ -1,6 +1,6 @@
-## Engine Health Prediction & Analysis
+# Engine Health Prediction & Analysis
 ---
-# Rebecca Li | UCLA MASDS
+## Rebecca Li | UCLA MASDS
 
 This project builds a predictive maintenance framework for automotive engines using a Kaggle engine-sensor dataset. The goal is to analyze engine health, understand sensor behavior, and develop machine learning models that predict faulty engine states.
 
@@ -415,6 +415,7 @@ weighted avg       0.65      0.67      0.65      3907
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
 
