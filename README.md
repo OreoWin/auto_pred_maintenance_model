@@ -88,7 +88,9 @@ Explained variance ratio: [0.1899485  0.17692968 0.17071361]
 ```
 
 ![PCA](figures/PCA_1.png)
+
 Variance is evenly distributed → sensors capture different dimensions of engine behavior.  
+
 ```python
 pca_full = PCA().fit(Z_scaled)
 
@@ -99,9 +101,60 @@ plt.title("Scree Plot")
 plt.show()
 ```
 ![PCAscree](figures/PCA_scree_plot.png)
+
 PCA scatter plots show no separation between faulty vs healthy engines.  
 
-Confirms that dimensionality reduction is not beneficial.
+```python
+svm = SVC(kernel='rbf', gamma='scale', probability=True)
+svm.fit(df[['PC1', 'PC2']], df['Engine Condition'])
+
+x_min, x_max = df['PC1'].min() - 1, df['PC1'].max() + 1
+y_min, y_max = df['PC2'].min() - 1, df['PC2'].max() + 1
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 300),
+                     np.linspace(y_min, y_max, 300))
+
+Z = svm.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+Z = Z.reshape(xx.shape)
+
+plt.figure(figsize=(8,6))
+plt.contourf(xx, yy, Z, levels=20, cmap='coolwarm', alpha=0.4)
+sns.scatterplot(x='PC1', y='PC2', hue='Engine Condition', data=df, s=30)
+plt.title("Nonlinear Decision Boundary (SVM on PCA)")
+plt.show()
+```
+![SVMPCA](figures/nonlinear_decision_boundary.png)
+Engine faults are driven by nonlinear combinations of sensor readings (temperature, pressure, RPM).
+The PCA + SVM boundary visualization clearly shows that fault conditions do not form distinct clusters in feature space; instead, they interleave continuously with normal operating states.Therefore:
+
+- Unsupervised clustering (KMeans, DBSCAN) will fail, because there is no geometric separation.
+- Distance-based models such as KNN are ineffective, because the local neighborhood does not reflect engine condition.
+
+```python
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+scores = []
+
+for k in range(2, 9):
+    km = KMeans(n_clusters=k, random_state=42)
+    labels = km.fit_predict(Z_scaled)
+    score = silhouette_score(Z_scaled, labels)
+    scores.append(score)
+    print(f"k = {k}, silhouette = {score:.3f}")
+
+plt.plot(range(2, 9), scores, marker='o')
+plt.title("Silhouette Score vs Number of Clusters")
+plt.xlabel("k")
+plt.ylabel("Silhouette Score")
+plt.show()
+```
+![sihouette](figures/Silhouette_Score_vs_Number_of_Clusters.png)
+Silhouette analysis across k = 2–8 shows scores between 0.12 and 0.16, far below the threshold (0.25) for meaningful cluster structure.
+This indicates that engine sensor data does not partition naturally into subgroups.The structure is continuous rather than discrete, meaning:
+- No clear boundaries exist between fault and non-fault cases.
+- Clustering algorithms cannot identify distinct operating modes.
+Together with the PCA scatter plot, this confirms that clustering is not appropriate for this dataset.
+
 
 ### **4.2 Clustering (K-Means)**
 Silhouette scores for k = 2–8 range only **0.12–0.16**  
@@ -175,4 +228,5 @@ RPM shows low importance → speed alone does not predict faults.
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
