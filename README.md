@@ -146,7 +146,6 @@ xx, yy = np.meshgrid(np.linspace(x_min, x_max, 300),
 Z = svm.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
 Z = Z.reshape(xx.shape)
 
-plt.figure(figsize=(8,6))
 plt.contourf(xx, yy, Z, levels=20, cmap='coolwarm', alpha=0.4)
 sns.scatterplot(x='PC1', y='PC2', hue='Engine Condition', data=df, s=30)
 plt.title("Nonlinear Decision Boundary (SVM on PCA)")
@@ -415,6 +414,7 @@ weighted avg       0.65      0.67      0.65      3907
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
 
