@@ -206,14 +206,29 @@ Engine faults result from complex nonlinear interactions, not geometric groups.
 - Useful for quick benchmarking.
 
 ```python
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, roc_auc_score
 
-log_reg = LogisticRegression(max_iter=1000, class_weight="balanced")
-log_reg.fit(X_train_scaled, y_train)
+X = df.drop(columns=["Engine Condition"])
+y = df["Engine Condition"]
 
-y_pred = log_reg.predict(X_test_scaled)
-y_proba = log_reg.predict_proba(X_test_scaled)[:, 1]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
+
+# pipeline
+pipe = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression(max_iter=1000, class_weight="balanced"))
+])
+
+# fit
+pipe.fit(X_train, y_train)
+y_pred = pipe.predict(X_test)
+y_proba = pipe.predict_proba(X_test)[:, 1]
 
 print(classification_report(y_test, y_pred))
 print("AUC:", roc_auc_score(y_test, y_proba))
@@ -400,6 +415,7 @@ weighted avg       0.65      0.67      0.65      3907
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
 
