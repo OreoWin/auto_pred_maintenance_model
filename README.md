@@ -129,6 +129,9 @@ The PCA + SVM boundary visualization clearly shows that fault conditions do not 
 - Unsupervised clustering (KMeans, DBSCAN) will fail, because there is no geometric separation.
 - Distance-based models such as KNN are ineffective, because the local neighborhood does not reflect engine condition.
 
+
+
+### **4.2 Clustering (K-Means)**
 ```python
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -156,15 +159,9 @@ This indicates that engine sensor data does not partition naturally into subgrou
 Together with the PCA scatter plot, this confirms that clustering is not appropriate for this dataset.
 
 
-### **4.2 Clustering (K-Means)**
-Silhouette scores for k = 2–8 range only **0.12–0.16**  
-→ far below the threshold (~0.25) for meaningful cluster structure.
-
-**Conclusion:**  
+**Conclusion**  
 The data does *not* naturally cluster.  
-Engine faults result from **complex nonlinear interactions**, not geometric groups.
-
-
+Engine faults result from complex nonlinear interactions, not geometric groups.
 
 ## 5. Supervised Models
 
@@ -228,5 +225,6 @@ RPM shows low importance → speed alone does not predict faults.
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
