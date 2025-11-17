@@ -1,6 +1,6 @@
-# Engine Health Prediction & Analysis
+## Engine Health Prediction & Analysis
 ---
-Rebecca Li | UCLA MASDS
+# Rebecca Li | UCLA MASDS
 
 This project builds a predictive maintenance framework for automotive engines using a Kaggle engine-sensor dataset. The goal is to analyze engine health, understand sensor behavior, and develop machine learning models that predict faulty engine states.
 
@@ -42,6 +42,31 @@ Name: proportion, dtype: float64
 ```
 
 The dataset is imbalanced. 
+
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression   # or any model you want
+
+X = df.drop(columns=["Engine Condition"])
+y = df["Engine Condition"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
+
+pipe = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression())
+])
+
+pipe.fit(X_train, y_train)
+
+y_pred = pipe.predict(X_test)
+```
+Created a sample pipeline for scaling and modelling. 
+
 
 ## 3. EDA 
 
@@ -375,6 +400,7 @@ weighted avg       0.65      0.67      0.65      3907
 - Carlibration on xgb
 - Add SHAP for xgb
 - Build dashboard
+
 
 
 
